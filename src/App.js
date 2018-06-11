@@ -34,9 +34,35 @@ class App extends Component {
 			imageUrl: '',
 			box: {},
 			route: 'signin', //track where user is on the page
-	    	isSignedIn: false
+	    	isSignedIn: false,
+	    	user: {
+	    		id:'',
+	    		name:'',
+	    		email:'',
+	    		entries:0,
+	    		joined: new Date()
+	    	}
 	    }
 	}
+
+	loadUser = (dado) => {
+		this.setState({
+			user: {
+				id: dado.id,
+				name: dado.name,
+				email: dado.email,
+				entries: dado.entries,
+				joined: dado.joined
+			}
+		})
+	}
+
+	//TO TEST BACK-END CONNECTION:
+	// componentDidMount() {
+	// 	fetch('http://localhost:2000/')
+	// 		.then(response => response.json())
+	// 		.then(console.log) //same as: data => console.log(data)
+	// }
 
 	calculateFaceLocation = (data) => {
 		const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -87,7 +113,7 @@ class App extends Component {
 	        	{ this.state.route === 'home' // ternary operator (if-else)
 	        		? 	<div>
 				        	<Logo />
-				        	<Rank />
+				        	<Rank name={this.state.user.name} entries={this.state.user.entries}/>
 				        	<ImageLinkForm 
 				            	naMudancaInput={this.onInputChange} 
 				            	noBotaoSubmeter={this.onButtonSubmit}/>
@@ -95,11 +121,9 @@ class App extends Component {
 	        		 	</div>
 	        		: 	(
 							this.state.route === 'signin' || this.state.route === 'signout'
-								? <Signin onRouteChange={this.onRouteChange} />
-								: <Register onRouteChange={this.onRouteChange} />
+								? <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
+								: <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
 	        			)
-
-	        		
 	        	}
 	      </div>
 	    );
