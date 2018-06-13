@@ -32,6 +32,8 @@ import React from 'react';
 				.then(response => response.json())
 				.then(user => {
 					if(user.id) {
+						this.props.loadUser(user);
+						//update the state with new user properties when sign in
 						this.props.onRouteChange('home');
 					}
 				})
