@@ -26,23 +26,25 @@ const particlesOptions = {
   }
 }                
 
+const initialState = {
+	input: '',
+	imageUrl: '',
+	box: {},
+	route: 'signin', //track where user is on the page
+	isSignedIn: false,
+	user: {
+		id:'',
+		name:'',
+		email:'',
+		entries:0,
+		joined: new Date()
+	}
+}
+
 class App extends Component {
 	constructor() {
 		super();
-	    this.state = {
-			input: '',
-			imageUrl: '',
-			box: {},
-			route: 'signin', //track where user is on the page
-	    	isSignedIn: false,
-	    	user: {
-	    		id:'',
-	    		name:'',
-	    		email:'',
-	    		entries:0,
-	    		joined: new Date()
-	    	}
-	    }
+	    this.state = initialState;
 	}
 
 	loadUser = (dado) => {
@@ -56,13 +58,6 @@ class App extends Component {
 			}
 		})
 	}
-
-	//TO TEST BACK-END CONNECTION:
-	// componentDidMount() {
-	// 	fetch('http://localhost:2000/')
-	// 		.then(response => response.json())
-	// 		.then(console.log) //same as: data => console.log(data)
-	// }
 
 	calculateFaceLocation = (data) => {
 		const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -100,10 +95,11 @@ class App extends Component {
 						id: this.state.user.id
 					})
 				})
-					.then(response => response.json())
-					.then(count => {
-						this.setState(Object.assign(this.state.user, { entries: count }))
-					})
+				.then(response => response.json())
+				.then(count => {
+					this.setState(Object.assign(this.state.user, { entries: count }))
+				})
+				.catch(console.log)
 			}
 	    	this.displayFaceBox(this.calculateFaceLocation(response))
 	    })
@@ -112,7 +108,7 @@ class App extends Component {
 
 	onRouteChange = (rota) => {
 		if(rota === 'signout') {
-			this.setState({isSignedIn: false})
+			this.setState(initialState)
 		} else if (rota === 'home') {
 			this.setState({isSignedIn: true})
 		}
